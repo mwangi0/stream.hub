@@ -200,18 +200,6 @@
     </div>
 
     <script>
-        const API_KEY = "479311df279p7jvv1kqtm0";
-        
-        const videos = [
-            {
-                id: "xkq01upu0cre",
-                title: "dream-chaser 3840x2160",
-                thumbnail: "https://thumbcdn.com/snaps/vmwzevmkw0z97ur3.jpg",
-                embedUrl: "https://doodstream.com/e/xkq01upu0cre",
-                views: "0"
-            }
-        ];
-
         function formatViews(views) {
             if (!views || views === "0") return "0 views";
             if (views >= 1000000) return (views / 1000000).toFixed(1) + "M views";
@@ -219,10 +207,10 @@
             return views + " views";
         }
 
-        function renderVideoGrid() {
+        function renderVideoGrid(videos) {
             const grid = document.getElementById('videosGrid');
             
-            if (videos.length === 0) {
+            if (!videos || videos.length === 0) {
                 grid.innerHTML = `<div class="empty-state"><h3>📁 No videos found</h3><p>Upload videos to DoodStream</p></div>`;
                 return;
             }
@@ -248,9 +236,37 @@
             grid.innerHTML = html;
         }
 
+        async function fetchVideos() {
+            try {
+                const response = await fetch('/api/doodstream?action=list');
+                const data = await response.json();
+                
+                if (data.msg === "OK" && data.result && data.result.files) {
+                    const videos = data.result.files.map(file => ({
+                        id: file.file_code,
+                        title: file.title || file.file_name || "Untitled Video",
+                        thumbnail: file.single_img || `https://thumbcdn.com/snaps/${file.file_code}.jpg`,
+                        embedUrl: `https://doodstream.com/e/${file.file_code}`,
+                        views: parseInt(file.views) || 0
+                    }));
+                    renderVideoGrid(videos);
+                } else {
+                    throw new Error(data.msg || "Failed to fetch");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('videosGrid').innerHTML = `
+                    <div class="error-state">
+                        <h3>❌ Error loading videos</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
         function setupNavigation() {
             document.querySelector('.nav-home').addEventListener('click', () => {
-                renderVideoGrid();
+                fetchVideos();
             });
             document.querySelector('.nav-categories').addEventListener('click', () => {
                 document.getElementById('videosGrid').innerHTML = `<div class="empty-state"><h3>🏷️ Categories</h3><p>Coming soon</p></div>`;
@@ -260,7 +276,7 @@
             });
         }
 
-        renderVideoGrid();
+        fetchVideos();
         setupNavigation();
     </script>
 </body>
