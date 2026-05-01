@@ -189,27 +189,39 @@
     </div>
 
     <div class="footer">
-        <p>© 2025 StreamHub - Powered by DoodStream</p>
+        <p>© 2025 StreamHub - Powered by DoodStream & LuluStream</p>
     </div>
 
     <script>
-        // MANUAL VIDEO LIST - ADD YOUR VIDEOS HERE
+        // MANUAL VIDEO LIST - All your videos from DoodStream and LuluStream
         const videos = [
+            // DoodStream Video
             {
                 id: "xkq01upu0cre",
                 title: "dream-chaser 3840x2160",
                 thumbnail: "https://thumbcdn.com/snaps/vmwzevmkw0z97ur3.jpg",
                 embedUrl: "https://doodstream.com/e/xkq01upu0cre",
-                views: "0"
+                views: "0",
+                source: "DoodStream"
+            },
+            // LuluStream Video 1
+            {
+                id: "l82okacgmhcn",
+                title: "Parasited Insanity Case",
+                thumbnail: "https://img.lulucdn.com/l82okacgmhcn_t.jpg",
+                embedUrl: "https://luluvdo.com/l82okacgmhcn",
+                views: "0",
+                source: "LuluStream"
+            },
+            // LuluStream Video 2
+            {
+                id: "5dcbd74hol7z",
+                title: "Futanari XXX - No Need For Men Pt 1",
+                thumbnail: "https://img.lulucdn.com/5dcbd74hol7z_t.jpg",
+                embedUrl: "https://luluvdo.com/5dcbd74hol7z",
+                views: "1",
+                source: "LuluStream"
             }
-            // ADD YOUR SECOND VIDEO BELOW (remove the // to uncomment)
-            // {
-            //     id: "YOUR_SECOND_FILE_CODE",
-            //     title: "YOUR_SECOND_VIDEO_TITLE",
-            //     thumbnail: "https://thumbcdn.com/snaps/YOUR_THUMBNAIL.jpg",
-            //     embedUrl: "https://doodstream.com/e/YOUR_SECOND_FILE_CODE",
-            //     views: "0"
-            // }
         ];
 
         function formatViews(views) {
@@ -217,6 +229,15 @@
             if (views >= 1000000) return (views / 1000000).toFixed(1) + "M views";
             if (views >= 1000) return (views / 1000).toFixed(1) + "K views";
             return views + " views";
+        }
+
+        function getSourceBadge(source) {
+            if (source === "DoodStream") {
+                return '<span style="background: #ffc107; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 5px;">DS</span>';
+            } else if (source === "LuluStream") {
+                return '<span style="background: #00bcd4; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 5px;">LS</span>';
+            }
+            return '';
         }
 
         function renderVideoGrid() {
@@ -231,6 +252,7 @@
             videos.forEach(video => {
                 const displayTitle = video.title.length > 50 ? video.title.substring(0, 50) + '...' : video.title;
                 const viewsText = formatViews(video.views);
+                const sourceBadge = getSourceBadge(video.source);
                 const playerUrl = `player.html?url=${encodeURIComponent(video.embedUrl)}&title=${encodeURIComponent(video.title)}&views=${encodeURIComponent(viewsText)}`;
                 
                 html += `
@@ -239,7 +261,7 @@
                             <img src="${video.thumbnail}" alt="${video.title}" onerror="this.src='https://via.placeholder.com/320x180?text=No+Thumbnail'">
                         </div>
                         <div class="video-info">
-                            <div class="video-title">${displayTitle}</div>
+                            <div class="video-title">${displayTitle} ${sourceBadge}</div>
                             <div class="video-meta">${viewsText}</div>
                         </div>
                     </a>
