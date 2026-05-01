@@ -106,6 +106,29 @@
             color: #ff6b6b;
         }
 
+        .redirect-message {
+            text-align: center;
+            padding: 4rem;
+            background: #1a1a1a;
+            border-radius: 12px;
+            color: #ffc107;
+        }
+
+        .redirect-button {
+            display: inline-block;
+            background: #ffc107;
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .redirect-button:hover {
+            background: #ffca2c;
+        }
+
         @media (max-width: 768px) {
             .video-container {
                 padding: 1rem;
@@ -134,11 +157,14 @@
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const embedUrl = urlParams.get('url');
+        let embedUrl = urlParams.get('url');
         const videoTitle = urlParams.get('title');
         const views = urlParams.get('views');
 
         const container = document.getElementById('playerContent');
+
+        // Check if this is a LuluStream URL (cannot be embedded)
+        const isLuluStream = embedUrl && (embedUrl.includes('luluvdo.com') || embedUrl.includes('lulustream.com'));
 
         if (!embedUrl) {
             container.innerHTML = `
@@ -147,7 +173,22 @@
                     <a href="index.html" style="color: #ffc107;">← Go to Home</a>
                 </div>
             `;
+        } else if (isLuluStream) {
+            // LuluStream videos cannot be embedded - redirect to their site
+            container.innerHTML = `
+                <div class="redirect-message">
+                    <h3>📺 This video is hosted on LuluStream</h3>
+                    <p>LuluStream does not allow embedding. Click the button below to watch on their site.</p>
+                    <a href="${embedUrl}" target="_blank" class="redirect-button">Watch on LuluStream →</a>
+                    <div class="video-info" style="margin-top: 2rem;">
+                        <div class="video-title">${videoTitle || 'Untitled Video'}</div>
+                        <div class="video-meta">${views ? '👁️ ' + views : ''}</div>
+                    </div>
+                </div>
+            `;
+            document.title = `${videoTitle || 'Watch'} - StreamHub`;
         } else {
+            // DoodStream videos can be embedded
             container.innerHTML = `
                 <div class="video-wrapper">
                     <iframe src="${embedUrl}" allowfullscreen frameborder="0"></iframe>
