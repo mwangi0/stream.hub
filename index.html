@@ -238,7 +238,7 @@
 
         async function fetchVideos() {
             try {
-                const response = await fetch('/api/doodstream?action=list');
+                const response = await fetch('/api/doodstream.js?action=list');
                 const data = await response.json();
                 
                 if (data.msg === "OK" && data.result && data.result.files) {
